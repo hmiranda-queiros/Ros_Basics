@@ -14,8 +14,9 @@
     <xacro:property name="wheel_len" value="0.015"/>
     <xacro:arg name="mass" default="0.270"/>
     <xacro:property name="mass_p" value="$(arg mass)"/>
-    <xacro:property name="body_mass" value="${mass_p * 0.80}"/>
+    <xacro:property name="body_mass" value="${mass_p * 0.75}"/>
     <xacro:property name="wheel_mass" value="${mass_p * 0.10}"/>
+    <xacro:property name="caster_mass" value="${mass_p * 0.05}"/>
 	
 
     <link name="base_link">
@@ -55,6 +56,10 @@
 		    </geometry>
 		    <material name="white"/>
 		</collision>
+        <inertial>
+			<mass value="${caster_mass}"/>
+			<xacro:sphere_inertia mass="${caster_mass}" r="0.0095" />
+		</inertial>
 	</link>
  
     <!-- Implement the left wheel -->
@@ -115,6 +120,7 @@
 		<child link="left_wheel"/>
 		<origin xyz="-0.03 0.056 -0.0100" rpy="0 0 0"/>
 		<axis xyz="0 1 0"/>
+        <dynamics friction="${left_wheel_mu_p}"/>
 	</joint>
     
     <!-- Implement the joint for the right wheel -->
@@ -123,6 +129,7 @@
 		<child link="right_wheel"/>
 		<origin xyz="-0.03 -0.056 -0.0100" rpy="0 0 0"/>
 		<axis xyz="0 1 0"/>
+        <dynamics friction="${right_wheel_mu_p}"/>
 	</joint>
 	
 
