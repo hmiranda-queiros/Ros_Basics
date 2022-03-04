@@ -95,14 +95,14 @@
   <!-- Implement the left wheel -->
   <link name="left_wheel">
     <visual>
-      <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <cylinder length="0.015" radius="0.022"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
-      <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <cylinder length="0.015" radius="0.022"/>
       </geometry>
@@ -116,14 +116,14 @@
   <!-- Implement the right wheel -->
   <link name="right_wheel">
     <visual>
-      <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <cylinder length="0.015" radius="0.022"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
-      <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <cylinder length="0.015" radius="0.022"/>
       </geometry>
@@ -139,14 +139,14 @@
     <parent link="base_link"/>
     <child link="left_wheel"/>
     <axis rpy="0 0 0" xyz="0 1 0"/>
-    <origin rpy="0 0 0" xyz="-0.03 0.056 -0.0100"/>
+    <origin rpy="1.57079632679 0 0" xyz="-0.03 0.056 -0.0100"/>
   </joint>
   <!-- Implement the joint for the right wheel -->
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
     <axis rpy="0 0 0" xyz="0 1 0"/>
-    <origin rpy="0 0 0" xyz="-0.03 -0.056 -0.0100"/>
+    <origin rpy="1.57079632679 0 0" xyz="-0.03 -0.056 -0.0100"/>
   </joint>
   <!-- Add your sensors using the macro -->
 </robot>
