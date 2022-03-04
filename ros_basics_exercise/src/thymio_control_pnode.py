@@ -10,7 +10,6 @@ from ros_basics_msgs.srv import SetWaypoints
 from geometry_msgs.msg import Pose2D
 
 
-"""
 def check_waypoint(x, y):
     sPose = SimplePoseStamped()
     sPose.pose.xyz.x = x
@@ -40,6 +39,7 @@ def call_current_waypoint():
     except rospy.ServiceException as e:
         print("Service call failed: %s" %e)
         talker(0, 0)
+    return 0, 0
 
 
 def path_to_follow():
@@ -79,7 +79,7 @@ def spin(x, y):
     x, y = call_current_waypoint()
 
     # 4) implement your PID/PD/P logic
-    # path_to_follow()
+    
 
     # 5) publish your computed velocities in the set_velocities topic
     talker(-0.05, -0.05)
@@ -93,13 +93,19 @@ def spin(x, y):
 if __name__ == '__main__':
     rospy.init_node('thymio_control_pnode', anonymous=True)
     path_to_follow()
-    #x = 0
-    #y = 0
-    #loop_rate = rospy.Rate(10)
-    #while not rospy.is_shutdown():
-       #x, y = spin(x, y)
-"""
+    x = 0
+    y = 0
+    loop_rate = rospy.Rate(10)
+    while not rospy.is_shutdown():
+       x, y = spin(x, y)
 
+
+
+
+
+
+
+"""
 sPose = SimplePoseStamped()
 sPose.pose.xyz.x = 0.0
 sPose.pose.xyz.y = 0.0
@@ -114,7 +120,49 @@ def listener():
     rospy.Subscriber('robot_pose', SimplePoseStamped, myCallback)
     rospy.spin()
 
-if __name__ == '__main__':
-    print("*******************************************")
-    print("Testing subscribing to robot pose pusblisher")
-    listener()
+def talker():
+    rospy.init_node('teste_node_publisher', anonymous=True)
+    pub = rospy.Publisher('set_velocities', SimpleVelocities)
+    rate = rospy.Rate(1)
+    while not rospy.is_shutdown():
+        nVel = SimpleVelocities(-0.05,-0.05)
+        rospy.loginfo(nVel)
+        pub.publish(nVel)
+        rate.sleep()
+
+    rospy.spin()
+
+rospy.init_node('test_node')
+
+def path_to_follow():
+    x_w = [0.10021, 0.20644, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
+    y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
+    
+    pose_l = []
+    for i, x in enumerate(x_w):
+        p = Pose2D()
+        p.x = x_w[i]
+        p.y = y_w[i]
+        pose_l.append(p)
+    rospy.wait_for_service('set_waypoints')
+    try:
+        set_wpt = rospy.ServiceProxy('set_waypoints', SetWaypoints)
+        resp = set_wpt(pose_l)
+    except rospy.ServiceException as e:
+        print("path_to_follow: Service call failed: %s"%e)
+
+path_to_follow()
+
+loop_rate = rospy.Rate(10)
+
+rospy.wait_for_service('current_waypoint')
+
+try:
+    get_cur_waypt = rospy.ServiceProxy('current_waypoint', CurrentWaypoint)
+    resp = get_cur_waypt()
+    print(resp, type(resp))
+    print(resp.goal.x, resp.goal.y)
+    print("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
+except rospy.ServiceException as e:
+    print("Service call failed: %s" % e)
+"""

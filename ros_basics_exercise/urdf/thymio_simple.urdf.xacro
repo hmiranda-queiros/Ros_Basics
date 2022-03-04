@@ -14,9 +14,9 @@
     <xacro:property name="wheel_len" value="0.015"/>
     <xacro:arg name="mass" default="0.270"/>
     <xacro:property name="mass_p" value="$(arg mass)"/>
-    <xacro:property name="body_mass" value="${mass_p * 0.75}"/>
+    <xacro:property name="body_mass" value="${mass_p * 0.78}"/>
     <xacro:property name="wheel_mass" value="${mass_p * 0.10}"/>
-    <xacro:property name="caster_mass" value="${mass_p * 0.05}"/>
+    <xacro:property name="caster_mass" value="${mass_p * 0.02}"/>
 	
 
     <link name="base_link">
