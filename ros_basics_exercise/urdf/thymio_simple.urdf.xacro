@@ -110,7 +110,7 @@
 	<joint name="caster_wheel_joint" type="fixed">
 		<parent link="base_link"/>
 		<child link="caster_wheel"/>
-		<origin xyz="0.03 0 -0.0225" rpy="0 0 0"/>
+		<origin xyz="0.045 0 -0.0225" rpy="0 0 0"/>
 		<axis xyz="0 0 0"/>
 	</joint>
 	
@@ -118,7 +118,7 @@
 	<joint name="left_wheel_joint" type="continuous">
 		<parent link="base_link"/>
 		<child link="left_wheel"/>
-		<origin xyz="-0.03 0.056 -0.0100" rpy="0 0 0"/>
+		<origin xyz="-0.02 0.056 -0.0100" rpy="0 0 0"/>
 		<axis xyz="0 1 0"/>
         <dynamics friction="${left_wheel_mu_p}"/>
 	</joint>
@@ -127,11 +127,18 @@
 	<joint name="right_wheel_joint" type="continuous">
 		<parent link="base_link"/>
 		<child link="right_wheel"/>
-		<origin xyz="-0.03 -0.056 -0.0100" rpy="0 0 0"/>
+		<origin xyz="-0.02 -0.056 -0.0100" rpy="0 0 0"/>
 		<axis xyz="0 1 0"/>
         <dynamics friction="${right_wheel_mu_p}"/>
 	</joint>
 	
 
     <!-- Add your sensors using the macro -->
+    <xacro:csensor plink="base_link" id="0" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="0.0600 0.0450 0" jointrpy="${pi} 0 ${pi/2 + pi/6}"/>
+    <xacro:csensor plink="base_link" id="1" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="0.0650 0.0225 0" jointrpy="${pi} 0 ${pi/2 + pi/12}"/>
+    <xacro:csensor plink="base_link" id="2" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="0.0700 0 0" jointrpy="${pi} 0 ${pi/2}"/>
+    <xacro:csensor plink="base_link" id="3" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="0.0600 -0.0450 0" jointrpy="0 0 -${pi/2 + pi/6}"/>
+    <xacro:csensor plink="base_link" id="4" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="0.0650 -0.0225 0" jointrpy="0 0 -${pi/2 + pi/12}"/>
+    <xacro:csensor plink="base_link" id="5" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="-0.056 -0.03 0" jointrpy="0 0 ${pi/2}"/>
+    <xacro:csensor plink="base_link" id="6" mass="0.001" originrpy="0 0 0" originxyz="-0.003 0 0" jointxyz="-0.056 0.03 0" jointrpy="0 0 ${pi/2}"/>
 </robot>
