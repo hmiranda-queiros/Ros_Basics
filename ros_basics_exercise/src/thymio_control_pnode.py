@@ -19,10 +19,13 @@ F = 10
 STATE_FREE = 0
 STATE_OBS = 1
 state = 0
-TIME = 10
+TIME = 5
 timer = 0
+max_v = 0.04
+max_w = 1
+sensor_threshold = 0.0005
 
-"""
+
 def check_waypoint():
     global robot_pose
     current_goal = call_current_waypoint()
@@ -40,9 +43,9 @@ def check_waypoint():
             resp = rm_waypoint(0)
         except rospy.ServiceException as e:
             print("check_waypoint: Service call failed: %s"%e)
+
+
 """
-
-
 def check_waypoint():
     global robot_pose
     rospy.wait_for_service('check_waypoint_reached')
@@ -51,7 +54,7 @@ def check_waypoint():
         resp = chk_wpt_reached(robot_pose, True)
     except rospy.ServiceException as e:
         print("check_waypoint: Service call failed: %s"%e)
-
+"""
 
 def myCallback(_data):
     global robot_pose
@@ -59,6 +62,7 @@ def myCallback(_data):
     robot_pose = _data
 
 def callSensors(_data):
+    global state, STATE_OBS, timer, sensor_threshold
     proximity_sensors = _data
     list_sens = proximity_sensors.values
     rospy.loginfo("sensors : %s",list_sens)
@@ -68,37 +72,32 @@ def callSensors(_data):
         if list_sens[i] < 10 and  list_sens[i] >= max_val:
             max_val = list_sens[i]
             idx_max = i
-    if max_val >= 0.005:
+    if max_val >= sensor_threshold:
         state = STATE_OBS
         timer = 0
-
+        front_speed = 0.04
+        rotate_speed = 0.7
         #front_left_most
         if idx_max == 0:
-            talker(-0.1, -0.2)
-        
+            talker(-front_speed, -rotate_speed)
         #front_left
-        if idx_max == 1:
-            talker(-0.1, -0.1)
-
+        elif idx_max == 1:
+            talker(-front_speed, -rotate_speed/2)
         #front_middle
-        if idx_max == 2:
-            talker(-0.1, 0)
-
+        elif idx_max == 2:
+            talker(-front_speed, 0)
         #front_right
-        if idx_max == 3:
-            talker(-0.1, 0.1)
-
+        elif idx_max == 3:
+            talker(-front_speed, rotate_speed/2)
         #front_right_most
-        if idx_max == 4:
-            talker(-0.1, 0.2)
-
+        elif idx_max == 4:
+            talker(-front_speed, rotate_speed)
         #back_right
-        if idx_max == 5:
-            talker(0.1, 0.1)
-
+        elif idx_max == 5:
+            talker(front_speed, rotate_speed/2)
         #back_left
-        if idx_max == 6:
-            talker(0.1, -0.1)
+        elif idx_max == 6:
+            talker(front_speed, -rotate_speed/2)
         
 
 
@@ -119,10 +118,10 @@ def call_current_waypoint():
 
 
 def path_to_follow():
-    #x_w = [0.10021, 0.20644, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
-    #y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
-    x_w = [0]
-    y_w = [0]
+    x_w = [0.10021, 0.17, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
+    y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
+    # x_w = [0]
+    # y_w = [0]
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
@@ -138,9 +137,14 @@ def path_to_follow():
 
 
 def talker(v, w):
+    global max_v, max_w
+    if abs(v) > max_v:
+        v = max_v * (v/abs(v))
+    if abs(w) > max_w:
+        w = max_w * (w/abs(w))
     pub = rospy.Publisher('set_velocities', SimpleVelocities)
     nVel = SimpleVelocities(v, w)
-    #rospy.loginfo(nVel)
+    rospy.loginfo(nVel)
     pub.publish(nVel)
 
 
@@ -218,5 +222,7 @@ if __name__ == '__main__':
     loop_rate = rospy.Rate(F)
     while not rospy.is_shutdown():
        spin()
+       rospy.loginfo("state = %s", state)
+       rospy.loginfo("time = %s", timer)
        loop_rate.sleep()
 
