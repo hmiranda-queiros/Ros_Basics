@@ -58,10 +58,19 @@ def myCallback(_data):
     rospy.loginfo(_data.pose.xyz)
     robot_pose = _data
 
+def callSensors(_data):
+    proximity_sensors = _data
+    list_sens = proximity_sensors.values
+    rospy.loginfo("#######################################")
+    rospy.loginfo("sensors : %d",list_sens)
+    for i in range (len(list_sens)):
+        if list_sens[i] >= 0.1:
+            talker(-0.4, 0)
+
 
 def listener():
     rospy.Subscriber('robot_pose', SimplePoseStamped, myCallback)
-    rospy.Subscriber('sensor_values', ProximitySensors, call_sensors)
+    rospy.Subscriber('proximity_sensors', ProximitySensors, callSensors)
 
 
 def call_current_waypoint():
@@ -75,9 +84,10 @@ def call_current_waypoint():
 
 
 def path_to_follow():
-    x_w = [0.10021, 0.20644, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
-    y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
-
+    #x_w = [0.10021, 0.20644, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
+    #y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
+    x_w = [0.10021, 0.20644]
+    y_w = [0.0030, 0.0030]
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
@@ -95,7 +105,7 @@ def path_to_follow():
 def talker(v, w):
     pub = rospy.Publisher('set_velocities', SimpleVelocities)
     nVel = SimpleVelocities(v, w)
-    rospy.loginfo(nVel)
+    #rospy.loginfo(nVel)
     pub.publish(nVel)
 
 
@@ -104,7 +114,6 @@ def check_end():
     try:
         get_cur_waypt = rospy.ServiceProxy('current_waypoint', CurrentWaypoint)
         resp = get_cur_waypt()
-        rospy.loginfo("end %s", resp.is_empty)
         return resp.is_empty
     except rospy.ServiceException as e:
         print("Service call failed: %s" %e)
@@ -124,9 +133,8 @@ def control(current_goal):
     goal_th = math.atan2((goal_y-pos_y), (goal_x-pos_x)+0.0000001)
     
     dist = math.sqrt( ((goal_x-pos_x)**2) + ((goal_y-pos_y)**2) )
+
     angle = goal_th - pos_th
-    
-    
     if angle > math.pi:
         angle -= 2*math.pi
     elif angle < -math.pi:
@@ -136,14 +144,6 @@ def control(current_goal):
     speed_ang = kp_ang * angle + kd_fwd * (angle - error_prev[1])
     error_prev = [dist, angle]
     return float(speed_fwd), float(speed_ang)
-
-
-def call_sensors():
-    _data = []
-    for i in range (len(_data)):
-        if _data[i] >= 0.1:
-            talker(-0.4, 0)
-
 
 
 def spin():
@@ -165,7 +165,6 @@ def spin():
             # 5) publish your computed velocities in the set_velocities topic
             talker(v, w)
 
-            call_sensors()
             # 6) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
         else :
             timer += 1

@@ -3,7 +3,7 @@
 
     <arg name="x" default="0"/>
     <arg name="y" default="0"/>
-    <arg name="z" default="0.05"/>
+    <arg name="z" default="0.20"/>
     <arg name="node_start_delay" default="3.0" />
     <arg name="with_gazebo" default="true" />
 
