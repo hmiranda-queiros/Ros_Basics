@@ -95,7 +95,7 @@
                     </range>
                 </ray>
                 <plugin name="laser" filename="libgazebo_ros_laser.so">
-                    <topicName>/thymio_laser/sensor_${id}</topicName>
+                    <topicName>/thymio_laser_${id}/scan</topicName>
                     <frameName>sensor_${id}</frameName>
                 </plugin>
                 <always_on>true</always_on>

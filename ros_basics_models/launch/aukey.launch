@@ -1,5 +1,5 @@
 <launch>
-    <param name="camera_description" command="$(find xacro)/xacro '$(find ros_basics_models)/urdf/logi_c615.urdf.xacro'"/>
+    <param name="camera_description" command="$(find xacro)/xacro '$(find ros_basics_models)/urdf/aukey.urdf.xacro'"/>
 
     <arg name="x" default="0"/>
     <arg name="y" default="0"/>

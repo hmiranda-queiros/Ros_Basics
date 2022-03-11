@@ -62,7 +62,7 @@ def callSensors(_data):
     proximity_sensors = _data
     list_sens = proximity_sensors.values
     rospy.loginfo("#######################################")
-    rospy.loginfo("sensors : %d",list_sens)
+    rospy.loginfo("sensors : %s",list_sens)
     for i in range (len(list_sens)):
         if list_sens[i] >= 0.1:
             talker(-0.4, 0)
