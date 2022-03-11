@@ -19,7 +19,7 @@ F = 10
 STATE_FREE = 0
 STATE_OBS = 1
 state = 0
-TIME = 20
+TIME = 10
 timer = 0
 
 """
@@ -61,11 +61,46 @@ def myCallback(_data):
 def callSensors(_data):
     proximity_sensors = _data
     list_sens = proximity_sensors.values
-    rospy.loginfo("#######################################")
     rospy.loginfo("sensors : %s",list_sens)
+    max_val = 0
+    idx_max = 0
     for i in range (len(list_sens)):
-        if list_sens[i] >= 0.1:
-            talker(-0.4, 0)
+        if list_sens[i] < 10 and  list_sens[i] >= max_val:
+            max_val = list_sens[i]
+            idx_max = i
+    if max_val >= 0.005:
+        state = STATE_OBS
+        timer = 0
+
+        #front_left_most
+        if idx_max == 0:
+            talker(-0.1, -0.2)
+        
+        #front_left
+        if idx_max == 1:
+            talker(-0.1, -0.1)
+
+        #front_middle
+        if idx_max == 2:
+            talker(-0.1, 0)
+
+        #front_right
+        if idx_max == 3:
+            talker(-0.1, 0.1)
+
+        #front_right_most
+        if idx_max == 4:
+            talker(-0.1, 0.2)
+
+        #back_right
+        if idx_max == 5:
+            talker(0.1, 0.1)
+
+        #back_left
+        if idx_max == 6:
+            talker(0.1, -0.1)
+        
+
 
 
 def listener():
@@ -86,8 +121,8 @@ def call_current_waypoint():
 def path_to_follow():
     #x_w = [0.10021, 0.20644, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
     #y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
-    x_w = [0.10021, 0.20644]
-    y_w = [0.0030, 0.0030]
+    x_w = [0]
+    y_w = [0]
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
@@ -169,7 +204,6 @@ def spin():
         else :
             timer += 1
             if timer == TIME :
-                timer = 0
                 state = STATE_FREE
     else :
         talker(0, 0)
