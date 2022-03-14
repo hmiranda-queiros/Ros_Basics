@@ -23,7 +23,7 @@ TIME = 5
 timer = 0
 max_v = 0.04
 max_w = 1
-sensor_threshold = 0.0005
+sensor_threshold = 0.03
 
 
 def check_waypoint():
@@ -66,37 +66,37 @@ def callSensors(_data):
     proximity_sensors = _data
     list_sens = proximity_sensors.values
     rospy.loginfo("sensors : %s",list_sens)
-    max_val = 0
-    idx_max = 0
+    min_val = 10
+    idx_min = 0
     for i in range (len(list_sens)):
-        if list_sens[i] < 10 and  list_sens[i] >= max_val:
-            max_val = list_sens[i]
-            idx_max = i
-    if max_val >= sensor_threshold:
+        if list_sens[i] <= min_val:
+            min_val = list_sens[i]
+            idx_min = i
+    if min_val <= sensor_threshold:
         state = STATE_OBS
         timer = 0
         front_speed = 0.04
         rotate_speed = 0.7
         #front_left_most
-        if idx_max == 0:
+        if idx_min == 0:
             talker(-front_speed, -rotate_speed)
         #front_left
-        elif idx_max == 1:
+        elif idx_min == 1:
             talker(-front_speed, -rotate_speed/2)
         #front_middle
-        elif idx_max == 2:
+        elif idx_min == 2:
             talker(-front_speed, 0)
         #front_right
-        elif idx_max == 3:
+        elif idx_min == 3:
             talker(-front_speed, rotate_speed/2)
         #front_right_most
-        elif idx_max == 4:
+        elif idx_min == 4:
             talker(-front_speed, rotate_speed)
         #back_right
-        elif idx_max == 5:
+        elif idx_min == 5:
             talker(front_speed, rotate_speed/2)
         #back_left
-        elif idx_max == 6:
+        elif idx_min == 6:
             talker(front_speed, -rotate_speed/2)
         
 
@@ -120,8 +120,6 @@ def call_current_waypoint():
 def path_to_follow():
     x_w = [0.10021, 0.17, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
     y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
-    # x_w = [0]
-    # y_w = [0]
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
