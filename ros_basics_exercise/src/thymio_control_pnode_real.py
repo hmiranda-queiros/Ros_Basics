@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import math
 import rospy
 from ros_basics_msgs.msg import SimplePoseStamped
@@ -45,6 +44,7 @@ def check_waypoint():
         except rospy.ServiceException as e:
             print("check_waypoint: Service call failed: %s"%e)
 """
+
 def check_waypoint():
     global robot_pose
     rospy.wait_for_service('check_waypoint_reached')
@@ -101,8 +101,6 @@ def callSensors(_data):
         elif idx_max == 6:
             talker(front_speed, -rotate_speed/2)
         
-
-
 
 def listener():
     rospy.Subscriber('robot_pose', SimplePoseStamped, myCallback)
@@ -193,39 +191,42 @@ def spin():
             # 1) call the corresponding service to check if the waypoint was reached
             check_waypoint()
 
-            # 2) subscribe to the robot_pose topic to get the robot's current pose
-            
-
-            # 3) call the corresponding service to get the current waypoint or waypoint list
+            # 2) call the corresponding service to get the current waypoint or waypoint list
             current_goal = call_current_waypoint()
 
-            # 4) implement your PID/PD/P logic
+            # 3) implement your PID/PD/P logic
             v, w = control(current_goal)
 
-            # 5) publish your computed velocities in the set_velocities topic
+            # 4) publish your computed velocities in the set_velocities topic
             talker(v, w)
 
-            # 6) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
+        # if there is an obstacle avoids it during TIME loops
         else :
             timer += 1
             if timer == TIME :
                 state = STATE_FREE
+
+    # 6) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
     else :
         talker(0, 0)
 
 
 
 if __name__ == '__main__':
+    file = open("/home/hugom/Documents/Info/Ros/ros_basics_ws/src/ros_basics_exercise/src/path.txt", "w")
+
     rospy.init_node('thymio_control_pnode', anonymous=True)
     robot_pose = SimplePoseStamped()
+    
+    # sets the waypoints of the path to follow
     #path_to_follow()
+
+    # subscribe to the topics
     listener()
+
     loop_rate = rospy.Rate(F)
-    file = open("/home/student/Documents/ouioui/src/ros_basics_exercise/src/path.txt", "w")
     while not rospy.is_shutdown():
        spin()
-       rospy.loginfo("state = %s", state)
-       rospy.loginfo("time = %s", timer)
        file.flush()
        loop_rate.sleep()
 
