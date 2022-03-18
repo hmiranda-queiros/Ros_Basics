@@ -48,6 +48,7 @@ axs.set_ylabel("y")
 axs.set_title("Real path")
 axs.legend(loc='upper left')
 f.show()
+f.savefig('real_path.png')
 
 # plot for simulated path
 f, axs = plt.subplots(1)
@@ -75,6 +76,7 @@ axs.set_ylabel("y")
 axs.set_title("Simulated path")
 axs.legend(loc='upper left')
 f.show()
+f.savefig('simulated_path.png')
 
 
 # plot for real path vs simulated path
@@ -105,17 +107,23 @@ axs.set_ylabel("y")
 axs.set_title("Real path vs Simulated path")
 axs.legend(loc='upper left')
 f.show()
+f.savefig('real_path_vs_simulated_path.png')
 
+"""
 # plot for real orientation vs simulated orientation
 f, axs = plt.subplots(1)
 time = range(len(theta_s))
 time = [i * 0.1 for i in time]
-axs.plot(time, theta_r[:len(time)], 'c--', label="real orientation")
+end = int(len(theta_r)/len(theta_s)) * len(theta_s)
 
-axs.plot(time, theta_s, 'm--', label="simulated orientation")
+axs.plot(time[:end], theta_r[:end:int(len(theta_r)/len(theta_s))], 'c--', label="real orientation")
+
+axs.plot(time[:end], theta_s[:end], 'm--', label="simulated orientation")
 
 axs.set_xlabel("time (s)")
 axs.set_ylabel("theta (degrees)")
 axs.set_title("Real orientation vs Simulated orientation")
 axs.legend(loc='upper left')
 f.show()
+f.savefig('real_orientation_vs_simulated_orientation.png')
+"""
