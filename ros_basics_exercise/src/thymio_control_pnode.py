@@ -21,8 +21,8 @@ STATE_OBS = 1
 state = 0
 TIME = 5
 timer = 0
-max_v = 0.07
-max_w = 2
+max_v = 0.04
+max_w = 1
 sensor_threshold = 0.03
 
 kx = 0.35/0.22
