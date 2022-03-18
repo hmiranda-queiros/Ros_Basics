@@ -1,10 +1,10 @@
 <launch>
     <param name="thymio_description" command="$(find xacro)/xacro '$(find ros_basics_exercise)/urdf/thymio_simple.urdf.xacro'"/>
 
-    <arg name="x" default="0.3205"/> 
-    <arg name="y" default="-0.0432"/>
+    <arg name="x" default="0"/> 
+    <arg name="y" default="0"/>
     <arg name="z" default="0.20"/>
-    <arg name="yaw" default="2.9060080058916604"/>
+    <arg name="yaw" default="0"/>
     <arg name="node_start_delay" default="3.0" />
     <arg name="with_gazebo" default="true" />
 
