@@ -1,9 +1,10 @@
 <launch>
     <param name="thymio_description" command="$(find xacro)/xacro '$(find ros_basics_exercise)/urdf/thymio_simple.urdf.xacro'"/>
 
-    <arg name="x" default="0"/>
-    <arg name="y" default="0"/>
+    <arg name="x" default="0.3205"/> 
+    <arg name="y" default="-0.0432"/>
     <arg name="z" default="0.20"/>
+    <arg name="yaw" default="2.9060080058916604"/>
     <arg name="node_start_delay" default="3.0" />
     <arg name="with_gazebo" default="true" />
 
@@ -16,6 +17,6 @@
 
     <arg name="ns" default="/" />
     <group ns="$(arg ns)">
-        <node name="thymio_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param thymio_description -model thymio -x $(arg x) -y $(arg y) -z $(arg z)" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+        <node name="thymio_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param thymio_description -model thymio -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw)" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
     </group>
 </launch>
