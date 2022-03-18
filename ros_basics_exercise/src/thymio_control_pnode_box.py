@@ -31,10 +31,10 @@ def check_waypoint():
     current_goal = call_current_waypoint()
     rospy.wait_for_service('remove_waypoint')
 
-    pos_x = robot_pose.pose.xyz.x
-    pos_y = robot_pose.pose.xyz.y
-    goal_x = current_goal.goal.x
-    goal_y = current_goal.goal.y
+    pos_x = robot_pose.pose.xyz.x_r
+    pos_y = robot_pose.pose.xyz.y_r
+    goal_x = current_goal.goal.x_r
+    goal_y = current_goal.goal.y_r
     dist = math.sqrt( ((goal_x-pos_x)**2) + ((goal_y-pos_y)**2) )
 
     if dist < 0.04:
@@ -123,8 +123,8 @@ def path_to_follow():
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
-        p.x = x_w[i]
-        p.y = y_w[i]
+        p.x_r = x_w[i]
+        p.y_r = y_w[i]
         pose_l.append(p)
     rospy.wait_for_service('set_waypoints')
     try:
@@ -161,11 +161,11 @@ def control(current_goal):
     kp_ang = 1.5
     kd_fwd = 0.01 * F
     kd_ang = 0.01 * F
-    pos_x = robot_pose.pose.xyz.x
-    pos_y = robot_pose.pose.xyz.y
+    pos_x = robot_pose.pose.xyz.x_r
+    pos_y = robot_pose.pose.xyz.y_r
     pos_th = robot_pose.pose.rpy.yaw
-    goal_x = current_goal.goal.x
-    goal_y = current_goal.goal.y
+    goal_x = current_goal.goal.x_r
+    goal_y = current_goal.goal.y_r
     
     goal_th = math.atan2((goal_y-pos_y), (goal_x-pos_x)+0.0000001)
     
