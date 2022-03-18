@@ -21,8 +21,8 @@ STATE_OBS = 1
 state = 0
 TIME = 5
 timer = 0
-max_v = 0.04
-max_w = 1
+max_v = 0.07
+max_w = 2
 sensor_threshold = 0.03
 
 kx = 0.35/0.22
@@ -81,8 +81,8 @@ def callSensors(_data):
     if min_val <= sensor_threshold:
         state = STATE_OBS
         timer = 0
-        front_speed = 0.04
-        rotate_speed = 0.7
+        front_speed = 0.035
+        rotate_speed = 1
         #front_left_most
         if idx_min == 0:
             talker(-front_speed, -rotate_speed)
@@ -91,7 +91,7 @@ def callSensors(_data):
             talker(-front_speed, -rotate_speed/2)
         #front_middle
         elif idx_min == 2:
-            talker(-front_speed, 0)
+            talker(-front_speed, -rotate_speed/2)
         #front_right
         elif idx_min == 3:
             talker(-front_speed, rotate_speed/2)

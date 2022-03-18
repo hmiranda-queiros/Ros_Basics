@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="https://www.ros.org/wiki/xacro" name="obstacle">
+
+    <xacro:include filename="$(find ros_basics_models)/urdf/utils/inertia.xacro" />
+    <xacro:include filename="$(find ros_basics_models)/urdf/utils/materials.xacro" />
+   
+    <xacro:arg name="mass" default="0.100"/>
+    <xacro:property name="mass_p" value="$(arg mass)"/>
+    <xacro:property name="body_mass" value="${mass_p}"/>
+
+    <link name="box">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.033 0.065 0.07"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.033 0.065 0.07"/>
+            </geometry>
+            <material name="white"/>
+        </collision>
+        <inertial>
+			<mass value="${body_mass}"/>
+			<xacro:box_inertia mass="${body_mass}" x="0.033" y="0.065" z="0.07" />
+		</inertial>
+    </link>
+
+</robot>
+    

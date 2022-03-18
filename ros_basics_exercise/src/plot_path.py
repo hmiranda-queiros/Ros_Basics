@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 headers_path = ['x', 'y', 'theta']
-df_path = pd.read_csv('best_path.csv', names=headers_path)
+df_path = pd.read_csv('real_path.csv', names=headers_path)
 
 kx = 0.35/0.22
 ky = 0.2/0.13
@@ -11,7 +11,7 @@ x = df_path['x'] * kx
 y = df_path['y'] * ky
 
 headers_way = ['x', 'y']
-df_way = pd.read_csv('best_path_waypoint.csv', names=headers_way)
+df_way = pd.read_csv('path_waypoint.csv', names=headers_way)
 
 x_w = df_way['x'] * kx
 y_w = df_way['y'] * ky

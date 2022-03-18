@@ -85,7 +85,7 @@ def callSensors(_data):
             talker(-front_speed, -rotate_speed/2)
         #front_middle
         elif idx_min == 2:
-            talker(-front_speed, 0)
+            talker(-front_speed, -rotate_speed/2)
         #front_right
         elif idx_min == 3:
             talker(-front_speed, rotate_speed/2)
@@ -205,7 +205,7 @@ def spin():
             if timer == TIME :
                 state = STATE_FREE
 
-    # 6) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
+    # 5) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
     else :
         talker(0, 0)
 
