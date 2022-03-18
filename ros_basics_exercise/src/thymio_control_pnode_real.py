@@ -117,24 +117,6 @@ def call_current_waypoint():
     return resp
 
 
-def path_to_follow():
-    x_w = [0.10021, 0.17, 0.17237, 0.09320, 0.0, 0.0010, -0.08418, 0.0010, -0.16034, -0.16034]
-    y_w = [0.0030, 0.0030, 0.08017, 0.11825, 0.11725, 0.0010, -0.11825, -0.11624, -0.06814, 0.05110, 0.12126]
-    
-    pose_l = []
-    for i, x in enumerate(x_w):
-        p = Pose2D()
-        p.x = x_w[i]
-        p.y = y_w[i]
-        pose_l.append(p)
-    rospy.wait_for_service('set_waypoints')
-    try:
-        set_wpt = rospy.ServiceProxy('set_waypoints', SetWaypoints)
-        resp = set_wpt(pose_l)
-    except rospy.ServiceException as e:
-        print("path_to_follow: Service call failed: %s"%e)
-
-
 def talker(v, w):
     global max_v, max_w
     if abs(v) > max_v:
@@ -206,7 +188,7 @@ def spin():
             if timer == TIME :
                 state = STATE_FREE
 
-    # 6) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
+    # 5) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
     else :
         talker(0, 0)
 
@@ -217,9 +199,6 @@ if __name__ == '__main__':
 
     rospy.init_node('thymio_control_pnode', anonymous=True)
     robot_pose = SimplePoseStamped()
-    
-    # sets the waypoints of the path to follow
-    #path_to_follow()
 
     # subscribe to the topics
     listener()
