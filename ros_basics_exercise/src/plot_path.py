@@ -109,7 +109,7 @@ axs.legend(loc='upper left')
 f.show()
 f.savefig('real_path_vs_simulated_path.png')
 
-"""
+
 # plot for real orientation vs simulated orientation
 f, axs = plt.subplots(1)
 time = range(len(theta_s))
@@ -126,4 +126,4 @@ axs.set_title("Real orientation vs Simulated orientation")
 axs.legend(loc='upper left')
 f.show()
 f.savefig('real_orientation_vs_simulated_orientation.png')
-"""
+
