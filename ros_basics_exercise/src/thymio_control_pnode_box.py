@@ -31,18 +31,18 @@ def check_waypoint():
     current_goal = call_current_waypoint()
     rospy.wait_for_service('remove_waypoint')
 
-    pos_x = robot_pose.pose.xyz.x_r
-    pos_y = robot_pose.pose.xyz.y_r
-    goal_x = current_goal.goal.x_r
-    goal_y = current_goal.goal.y_r
-    dist = math.sqrt( ((goal_x-pos_x)**2) + ((goal_y-pos_y)**2) )
+    pos_x = robot_pose.pose.xyz.x
+    pos_y = robot_pose.pose.xyz.y
+    goal_x = current_goal.goal.x
+    goal_y = current_goal.goal.y
+    dist = math.sqrt(((goal_x - pos_x) ** 2) + ((goal_y - pos_y) ** 2))
 
     if dist < 0.04:
         try:
             rm_waypoint = rospy.ServiceProxy('remove_waypoint', RemoveWaypoint)
             resp = rm_waypoint(0)
         except rospy.ServiceException as e:
-            print("check_waypoint: Service call failed: %s"%e)
+            print("check_waypoint: Service call failed: %s" % e)
 
 
 """
@@ -56,19 +56,21 @@ def check_waypoint():
         print("check_waypoint: Service call failed: %s"%e)
 """
 
+
 def myCallback(_data):
     global robot_pose
     rospy.loginfo(_data.pose.xyz)
     robot_pose = _data
 
+
 def callSensors(_data):
     global state, STATE_OBS, timer, sensor_threshold
     proximity_sensors = _data
     list_sens = proximity_sensors.values
-    rospy.loginfo("sensors : %s",list_sens)
+    rospy.loginfo("sensors : %s", list_sens)
     min_val = 10
     idx_min = 0
-    for i in range (len(list_sens)):
+    for i in range(len(list_sens)):
         if list_sens[i] < min_val:
             min_val = list_sens[i]
             idx_min = i
@@ -77,29 +79,27 @@ def callSensors(_data):
         timer = 0
         front_speed = 0.04
         rotate_speed = 0.7
-        #front_left_most
+        # front_left_most
         if idx_min == 0:
             talker(-front_speed, -rotate_speed)
-        #front_left
+        # front_left
         elif idx_min == 1:
-            talker(-front_speed, -rotate_speed/2)
-        #front_middle
+            talker(-front_speed, -rotate_speed / 2)
+        # front_middle
         elif idx_min == 2:
-            talker(-front_speed, -rotate_speed/2)
-        #front_right
+            talker(-front_speed, -rotate_speed / 2)
+        # front_right
         elif idx_min == 3:
-            talker(-front_speed, rotate_speed/2)
-        #front_right_most
+            talker(-front_speed, rotate_speed / 2)
+        # front_right_most
         elif idx_min == 4:
             talker(-front_speed, rotate_speed)
-        #back_right
+        # back_right
         elif idx_min == 5:
-            talker(front_speed, rotate_speed/2)
-        #back_left
+            talker(front_speed, rotate_speed / 2)
+        # back_left
         elif idx_min == 6:
-            talker(front_speed, -rotate_speed/2)
-        
-
+            talker(front_speed, -rotate_speed / 2)
 
 
 def listener():
@@ -113,7 +113,7 @@ def call_current_waypoint():
         get_cur_waypt = rospy.ServiceProxy('current_waypoint', CurrentWaypoint)
         resp = get_cur_waypt()
     except rospy.ServiceException as e:
-        print("Service call failed: %s" %e)
+        print("Service call failed: %s" % e)
     return resp
 
 
@@ -123,23 +123,23 @@ def path_to_follow():
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
-        p.x_r = x_w[i]
-        p.y_r = y_w[i]
+        p.x = x_w[i]
+        p.y = y_w[i]
         pose_l.append(p)
     rospy.wait_for_service('set_waypoints')
     try:
         set_wpt = rospy.ServiceProxy('set_waypoints', SetWaypoints)
         resp = set_wpt(pose_l)
     except rospy.ServiceException as e:
-        print("path_to_follow: Service call failed: %s"%e)
+        print("path_to_follow: Service call failed: %s" % e)
 
 
 def talker(v, w):
     global max_v, max_w
     if abs(v) > max_v:
-        v = max_v * (v/abs(v))
+        v = max_v * (v / abs(v))
     if abs(w) > max_w:
-        w = max_w * (w/abs(w))
+        w = max_w * (w / abs(w))
     pub = rospy.Publisher('set_velocities', SimpleVelocities)
     nVel = SimpleVelocities(v, w)
     rospy.loginfo(nVel)
@@ -153,7 +153,8 @@ def check_end():
         resp = get_cur_waypt()
         return resp.is_empty
     except rospy.ServiceException as e:
-        print("Service call failed: %s" %e)
+        print("Service call failed: %s" % e)
+
 
 def control(current_goal):
     global robot_pose, error_prev, F
@@ -161,31 +162,31 @@ def control(current_goal):
     kp_ang = 1.5
     kd_fwd = 0.01 * F
     kd_ang = 0.01 * F
-    pos_x = robot_pose.pose.xyz.x_r
-    pos_y = robot_pose.pose.xyz.y_r
+    pos_x = robot_pose.pose.xyz.x
+    pos_y = robot_pose.pose.xyz.y
     pos_th = robot_pose.pose.rpy.yaw
-    goal_x = current_goal.goal.x_r
-    goal_y = current_goal.goal.y_r
-    
-    goal_th = math.atan2((goal_y-pos_y), (goal_x-pos_x)+0.0000001)
-    
-    dist = math.sqrt( ((goal_x-pos_x)**2) + ((goal_y-pos_y)**2) )
+    goal_x = current_goal.goal.x
+    goal_y = current_goal.goal.y
+
+    goal_th = math.atan2((goal_y - pos_y), (goal_x - pos_x) + 0.0000001)
+
+    dist = math.sqrt(((goal_x - pos_x) ** 2) + ((goal_y - pos_y) ** 2))
 
     angle = goal_th - pos_th
     if angle > math.pi:
-        angle -= 2*math.pi
+        angle -= 2 * math.pi
     elif angle < -math.pi:
-        angle += 2*math.pi
+        angle += 2 * math.pi
 
     speed_fwd = kp_fwd * dist + kd_fwd * (dist - error_prev[0])
-    speed_ang = kp_ang * angle + kd_fwd * (angle - error_prev[1])
+    speed_ang = kp_ang * angle + kd_ang * (angle - error_prev[1])
     error_prev = [dist, angle]
     return float(speed_fwd), float(speed_ang)
 
 
 def spin():
     global state, timer, TIME, STATE_FREE, STATE_OBS
-    if not check_end() :
+    if not check_end():
         if state == STATE_FREE:
             # 1) call the corresponding service to check if the waypoint was reached
             check_waypoint()
@@ -200,21 +201,20 @@ def spin():
             talker(v, w)
 
         # if there is an obstacle avoids it during TIME loops
-        else :
+        else:
             timer += 1
-            if timer == TIME :
+            if timer == TIME:
                 state = STATE_FREE
 
     # 5) if there are no waypoints left then set the velocities to 0 and wait for the next waypoint
-    else :
+    else:
         talker(0, 0)
-
 
 
 if __name__ == '__main__':
     rospy.init_node('thymio_control_pnode', anonymous=True)
     robot_pose = SimplePoseStamped()
-    
+
     # sets the waypoints of the path to follow
     path_to_follow()
 
@@ -223,6 +223,5 @@ if __name__ == '__main__':
 
     loop_rate = rospy.Rate(F)
     while not rospy.is_shutdown():
-       spin()
-       loop_rate.sleep()
-
+        spin()
+        loop_rate.sleep()

@@ -62,8 +62,8 @@ def myCallback(_data):
     global robot_pose, file
     rospy.loginfo(_data.pose.xyz)
     robot_pose = _data
-    file.write(str(robot_pose.pose.xyz.x_r) + ", ")
-    file.write(str(robot_pose.pose.xyz.y_r) + ", ")
+    file.write(str(robot_pose.pose.xyz.x) + ", ")
+    file.write(str(robot_pose.pose.xyz.y) + ", ")
     file.write(str(robot_pose.pose.rpy.yaw) + "\n")
 
 
@@ -131,8 +131,8 @@ def path_to_follow():
     pose_l = []
     for i, x in enumerate(x_w):
         p = Pose2D()
-        p.x_r = x_w[i]
-        p.y_r = y_w[i]
+        p.x = x_w[i]
+        p.y = y_w[i]
         pose_l.append(p)
     rospy.wait_for_service('set_waypoints')
     try:
@@ -170,11 +170,11 @@ def control(current_goal):
     kp_ang = 1.5
     kd_fwd = 0.01 * F
     kd_ang = 0.01 * F
-    pos_x = robot_pose.pose.xyz.x_r
-    pos_y = robot_pose.pose.xyz.y_r
+    pos_x = robot_pose.pose.xyz.x
+    pos_y = robot_pose.pose.xyz.y
     pos_th = robot_pose.pose.rpy.yaw
-    goal_x = current_goal.goal.x_r
-    goal_y = current_goal.goal.y_r
+    goal_x = current_goal.goal.x
+    goal_y = current_goal.goal.y
     
     goal_th = math.atan2((goal_y-pos_y), (goal_x-pos_x)+0.0000001)
     
@@ -187,7 +187,7 @@ def control(current_goal):
         angle += 2*math.pi
 
     speed_fwd = kp_fwd * dist + kd_fwd * (dist - error_prev[0])
-    speed_ang = kp_ang * angle + kd_fwd * (angle - error_prev[1])
+    speed_ang = kp_ang * angle + kd_ang * (angle - error_prev[1])
     error_prev = [dist, angle]
     return float(speed_fwd), float(speed_ang)
 
