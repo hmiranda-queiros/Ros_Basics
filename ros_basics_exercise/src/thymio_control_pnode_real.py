@@ -195,7 +195,7 @@ def spin():
 
 
 if __name__ == '__main__':
-    file = open("/home/hugom/Documents/Info/Ros/ros_basics_ws/src/ros_basics_exercise/src/path.txt", "w")
+    file = open("path.txt", "w")
 
     rospy.init_node('thymio_control_pnode', anonymous=True)
     robot_pose = SimplePoseStamped()
